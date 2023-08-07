@@ -7,3 +7,7 @@ The sole reason to write this is to have extremely customizable keyboard. For ex
 ## Other Mongolian Cyrillic keyboards
 Here is a much fancier keyboard that you can use out-of-box.
 http://www.studymongolian.net/technical/mongolian-keyboard-for-macos/
+
+## Building from the source.
+1. Make sure to have cmake and make installed.
+2. Run `make`.
