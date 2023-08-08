@@ -10,6 +10,7 @@
 #define MY_KEYBOARD 93 //Customizable value
 
 UniChar *bufferOfSizeOne;
+int *keyBoardSwitch;
 
 CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type,
     CGEventRef event, void *refcon) 
@@ -27,7 +28,7 @@ CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type,
     int input = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
     UniChar* inputUniStr = malloc(sizeof(CYRILLIC_OU));
 
-    int ret = setInputUniChar(event, input, inputUniStr, bufferOfSizeOne);
+    int ret = setInputUniChar(event, input, inputUniStr, bufferOfSizeOne, keyBoardSwitch);
     if (ret == 0) {
         CGEventKeyboardSetUnicodeString(event, 1, inputUniStr);
     }
@@ -52,6 +53,8 @@ int main(int argc, char* argv[]) {
     }
 
     bufferOfSizeOne = malloc(sizeof(CYRILLIC_A));
+    keyBoardSwitch = malloc(sizeof(int));
+    *keyBoardSwitch = 1;
 
     if (bufferOfSizeOne == NULL) {
         fprintf(stderr, "failed to allocate memory\n");

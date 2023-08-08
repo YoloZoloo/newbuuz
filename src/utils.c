@@ -9,11 +9,27 @@ int keyIsPressed(CGEventFlags flag, CGEventFlags mask) {
     return 0;
 }
 
-int setInputUniChar(CGEventRef event, int input, UniChar *uniStr, UniChar* buffer) {
+int setInputUniChar(CGEventRef event, int input, UniChar *uniStr, UniChar* buffer, int *boardSwitch) {
     CGEventFlags flag = CGEventGetFlags(event);
     int commandKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskCommand);
     int controlKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskControl);
     int shiftKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskShift);
+    int fnKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskSecondaryFn);
+    if (fnKeyIsPressed == 1 && shiftKeyIsPressed == 1 && 
+        input == 49 )
+    {
+        *boardSwitch = -(*boardSwitch);
+        if (*boardSwitch > 0) {
+            printf("Mongolian Keyboard is in use\n");
+        } else {
+            printf("The other keyboard is in use\n");
+        }
+        return 1;
+    }
+    if (*boardSwitch < 0) {
+        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) input);
+        return 1;
+    }
     if(controlKeyIsPressed == 1 || commandKeyIsPressed == 1) {
         CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) input);
         return 1;
