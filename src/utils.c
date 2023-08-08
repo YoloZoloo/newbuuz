@@ -11,10 +11,13 @@ int keyIsPressed(CGEventFlags flag, CGEventFlags mask) {
 
 int setInputUniChar(CGEventRef event, int input, UniChar *uniStr, UniChar* buffer) {
     CGEventFlags flag = CGEventGetFlags(event);
-    // int commandKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskCommand);
+    int commandKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskCommand);
     int controlKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskControl);
     int shiftKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskShift);
-
+    if(controlKeyIsPressed == 1 || commandKeyIsPressed == 1) {
+        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) input);
+        return 1;
+    }
     if (shiftKeyIsPressed == 1) {
         switch(input) {
             case Q_KEY:
@@ -151,10 +154,6 @@ int setInputUniChar(CGEventRef event, int input, UniChar *uniStr, UniChar* buffe
                 *uniStr=CYRILLIC_X;
                 break;
             case C_KEY:
-                if(controlKeyIsPressed == 1) {
-                    CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) input);
-                    return 1;
-                }
                 switch(*buffer){
                     case S_KEY:
                         *uniStr=CYRILLIC_SCH;
@@ -322,10 +321,6 @@ int setInputUniChar(CGEventRef event, int input, UniChar *uniStr, UniChar* buffe
                 *uniStr=CYRILLIC_x;
                 break;
             case C_KEY:
-                if(controlKeyIsPressed == 1) {
-                    CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) input);
-                    return 1;
-                }
                 switch(*buffer){
                     case S_KEY:
                         *uniStr=CYRILLIC_sch;
