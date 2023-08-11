@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <ApplicationServices/ApplicationServices.h>
 #ifndef Q_KEY
-    #include "characters.h"
+    #include "newbuuz.h"
 #endif
 #ifndef keyIsPressed
     #include "utils.c"
@@ -9,8 +9,8 @@
 
 #define MY_KEYBOARD 93 //Customizable value
 
-UniChar *bufferOfSizeOne;
-int *keyBoardSwitch;
+
+input_ctx *ctx;
 
 CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type,
     CGEventRef event, void *refcon) 
@@ -26,13 +26,12 @@ CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type,
     }
 
     int input = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
-    UniChar* inputUniStr = malloc(sizeof(CYRILLIC_OU));
+    ctx->inputInt = input;
 
-    int ret = setInputUniChar(event, input, inputUniStr, bufferOfSizeOne, keyBoardSwitch);
+    int ret = setInputUniChar(event, ctx);
     if (ret == 0) {
-        CGEventKeyboardSetUnicodeString(event, 1, inputUniStr);
+        CGEventKeyboardSetUnicodeString(event, 1, ctx->inputChar);
     }
-    free(inputUniStr);
     
     return event;
 }
@@ -51,12 +50,15 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "failed to create event tap\n");
         exit(1);
     }
+    ctx = malloc(sizeof(input_ctx));
+    
+    UniChar *bufferOfSizeOne = malloc(sizeof(CYRILLIC_A));
+    UniChar *inputChar = malloc(sizeof(CYRILLIC_A));
 
-    bufferOfSizeOne = malloc(sizeof(CYRILLIC_A));
-    keyBoardSwitch = malloc(sizeof(int));
-    *keyBoardSwitch = 1;
+    // ctx->buffer = bufferOfSizeOne;
+    ctx->inputChar = inputChar;
 
-    if (bufferOfSizeOne == NULL) {
+    if (inputChar == NULL) {
         fprintf(stderr, "failed to allocate memory\n");
         exit(1);
     }

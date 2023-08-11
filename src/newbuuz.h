@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <ApplicationServices/ApplicationServices.h>
 
 #define Q_KEY 12
 #define W_KEY 13
@@ -101,3 +102,12 @@
 #define CYRILLIC_e L'э'
 #define CYRILLIC_yu L'ю'
 #define CYRILLIC_ya L'я'
+
+
+typedef struct keyboard_input_ctx {
+    int buffer;
+    UniChar* inputChar;
+    int inputInt;
+    int boardSwitch;
+    int junctionLetter;
+} input_ctx;

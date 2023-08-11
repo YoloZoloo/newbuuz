@@ -1,6 +1,11 @@
 #include<stdio.h>
-#include "characters.h"
+#ifndef Q_KEY
+    #include "newbuuz.h"
+#endif
 #include <ApplicationServices/ApplicationServices.h>
+
+
+int setInputUniChar(CGEventRef event, input_ctx *ctx);
 
 int keyIsPressed(CGEventFlags flag, CGEventFlags mask) {
     if ((flag & mask) == mask) {
@@ -9,366 +14,366 @@ int keyIsPressed(CGEventFlags flag, CGEventFlags mask) {
     return 0;
 }
 
-int setInputUniChar(CGEventRef event, int input, UniChar *uniStr, UniChar* buffer, int *boardSwitch) {
+int setInputUniChar(CGEventRef event, input_ctx *ctx) {
     CGEventFlags flag = CGEventGetFlags(event);
     int commandKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskCommand);
     int controlKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskControl);
     int shiftKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskShift);
     int fnKeyIsPressed = keyIsPressed(flag, kCGEventFlagMaskSecondaryFn);
     if (fnKeyIsPressed == 1 && shiftKeyIsPressed == 1 && 
-        input == 49 )
+        ctx->inputInt == 49 )
     {
-        *boardSwitch = -(*boardSwitch);
-        if (*boardSwitch > 0) {
+        ctx->boardSwitch = -ctx->boardSwitch;
+        if (ctx->boardSwitch > 0) {
             printf("Mongolian Keyboard is in use\n");
         } else {
             printf("The other keyboard is in use\n");
         }
         return 1;
     }
-    if (*boardSwitch < 0) {
-        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) input);
+    if (ctx->boardSwitch < 0) {
+        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) ctx->inputInt);
         return 1;
     }
     if(controlKeyIsPressed == 1 || commandKeyIsPressed == 1) {
-        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) input);
+        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) ctx->inputInt);
         return 1;
     }
     if (shiftKeyIsPressed == 1) {
-        switch(input) {
+        switch(ctx->inputInt) {
             case Q_KEY:
-                *uniStr=CYRILLIC_OU;
+                *ctx->inputChar=CYRILLIC_OU;
                 break;
             case W_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_YU;
+                        *ctx->inputChar=CYRILLIC_YU;
                         break;
                     default:
-                        *uniStr=CYRILLIC_W;
+                        *ctx->inputChar=CYRILLIC_W;
                         break;
                 }
                 break;
             case E_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_YE;
+                        *ctx->inputChar=CYRILLIC_YE;
                         break;
                     default:
-                        *uniStr=CYRILLIC_E;
+                        *ctx->inputChar=CYRILLIC_E;
                         break;
                 }
                 break;
             case R_KEY:
-                *uniStr=CYRILLIC_R;
+                *ctx->inputChar=CYRILLIC_R;
                 break;
             case T_KEY:
-                *uniStr=CYRILLIC_T;
+                *ctx->inputChar=CYRILLIC_T;
                 break;
             case Y_KEY:
-                *uniStr=CYRILLIC_Y;
+                *ctx->inputChar=CYRILLIC_Y;
                 break;
             case U_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_YU;
+                        *ctx->inputChar=CYRILLIC_YU;
                         break;
                     default:
-                        *uniStr=CYRILLIC_U;
+                        *ctx->inputChar=CYRILLIC_U;
                         break;
                 }
                 break;
             case I_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case A_KEY:
-                        *uniStr=CYRILLIC_II;
+                        *ctx->inputChar=CYRILLIC_II;
                         break;
                     case E_KEY:
-                        *uniStr=CYRILLIC_II;
+                        *ctx->inputChar=CYRILLIC_II;
                         break;
                     case I_KEY:
-                        *uniStr=CYRILLIC_II;
+                        *ctx->inputChar=CYRILLIC_II;
                         break;
                     case O_KEY:
-                        *uniStr=CYRILLIC_II;
+                        *ctx->inputChar=CYRILLIC_II;
                         break;
                     case U_KEY:
-                        *uniStr=CYRILLIC_II;
+                        *ctx->inputChar=CYRILLIC_II;
                         break;
                     case Q_KEY:
-                        *uniStr=CYRILLIC_II;
+                        *ctx->inputChar=CYRILLIC_II;
                         break;
                     case W_KEY:
-                        *uniStr=CYRILLIC_II;
+                        *ctx->inputChar=CYRILLIC_II;
                         break;
                     default:
-                        *uniStr=CYRILLIC_I;
+                        *ctx->inputChar=CYRILLIC_I;
                         break;
                 }
                 break;
             case O_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_YO;
+                        *ctx->inputChar=CYRILLIC_YO;
                         break;
                     default:
-                        *uniStr=CYRILLIC_O;
+                        *ctx->inputChar=CYRILLIC_O;
                         break;
                 }
                 break;
             case P_KEY:
-                *uniStr=CYRILLIC_P;
+                *ctx->inputChar=CYRILLIC_P;
                 break;
             case A_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_YA;
+                        *ctx->inputChar=CYRILLIC_YA;
                         break;
                     default:
-                        *uniStr=CYRILLIC_A;
+                        *ctx->inputChar=CYRILLIC_A;
                         break;
                 }
                 break;
             case S_KEY:
-                *uniStr=CYRILLIC_S;
+                *ctx->inputChar=CYRILLIC_S;
                 break;
             case D_KEY:
-                *uniStr=CYRILLIC_D;
+                *ctx->inputChar=CYRILLIC_D;
                 break;
             case F_KEY:
-                *uniStr=CYRILLIC_F;
+                *ctx->inputChar=CYRILLIC_F;
                 break;
             case G_KEY:
-                *uniStr=CYRILLIC_G;
+                *ctx->inputChar=CYRILLIC_G;
                 break;
             case H_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case S_KEY:
-                        *uniStr=CYRILLIC_SH;
+                        *ctx->inputChar=CYRILLIC_SH;
                         break;
                     case C_KEY:
-                        *uniStr=CYRILLIC_CH;
+                        *ctx->inputChar=CYRILLIC_CH;
                         break;
                     default:
-                        *uniStr=CYRILLIC_X;
+                        *ctx->inputChar=CYRILLIC_X;
                         break;
                 }
                 break;
             case J_KEY:
-                *uniStr=CYRILLIC_J;
+                *ctx->inputChar=CYRILLIC_J;
                 break;
             case K_KEY:
-                *uniStr=CYRILLIC_K;
+                *ctx->inputChar=CYRILLIC_K;
                 break;
             case L_KEY:
-                *uniStr=CYRILLIC_L;
+                *ctx->inputChar=CYRILLIC_L;
                 break;
             case Z_KEY:
-                *uniStr=CYRILLIC_Z;
+                *ctx->inputChar=CYRILLIC_Z;
                 break;
             case X_KEY:
-                *uniStr=CYRILLIC_X;
+                *ctx->inputChar=CYRILLIC_X;
                 break;
             case C_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case S_KEY:
-                        *uniStr=CYRILLIC_SCH;
+                        *ctx->inputChar=CYRILLIC_SCH;
                         break;
                     default:
-                        *uniStr=CYRILLIC_C;
+                        *ctx->inputChar=CYRILLIC_C;
                         break;
                 }
                 break;
             case V_KEY:
-                *uniStr=CYRILLIC_V;
+                *ctx->inputChar=CYRILLIC_V;
                 break;
             case B_KEY:
-                *uniStr=CYRILLIC_B;
+                *ctx->inputChar=CYRILLIC_B;
                 break;
             case N_KEY:
-                *uniStr=CYRILLIC_N;
+                *ctx->inputChar=CYRILLIC_N;
                 break;
             case M_KEY:
-                *uniStr=CYRILLIC_M;
+                *ctx->inputChar=CYRILLIC_M;
                 break;
             case ZUULNII_TEMDEG_MARK:
-                *uniStr=CYRILLIC_zt;
+                *ctx->inputChar=CYRILLIC_zt;
                 break;
             case HATUUGIIN_TEMDEG_MARK:
-                *uniStr=CYRILLIC_xt;
+                *ctx->inputChar=CYRILLIC_xt;
                 break;
             default:
-                CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) input);
+                CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) ctx->inputInt);
                 return 1;
         }
     } else {
-        switch(input) {
+        switch(ctx->inputInt) {
             case Q_KEY:
-                *uniStr=CYRILLIC_ou;
+                *(ctx->inputChar)=CYRILLIC_ou;
                 break; 
             case W_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_yu;
+                        *ctx->inputChar=CYRILLIC_yu;
                         break;
                     default:
-                        *uniStr=CYRILLIC_w;
+                        *ctx->inputChar=CYRILLIC_w;
                         break;
                 }
                 break;
             case E_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_ye;
+                        *ctx->inputChar=CYRILLIC_ye;
                         break;
                     default:
-                        *uniStr=CYRILLIC_e;
+                        *ctx->inputChar=CYRILLIC_e;
                         break;
                 }
                 break;
             case R_KEY:
-                *uniStr=CYRILLIC_r;
+                *ctx->inputChar=CYRILLIC_r;
                 break;
             case T_KEY:
-                *uniStr=CYRILLIC_t;
+                *ctx->inputChar=CYRILLIC_t;
                 break;
             case Y_KEY:
-                *uniStr=CYRILLIC_y;
+                *ctx->inputChar=CYRILLIC_y;
                 break;
             case U_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_yu;
+                        *ctx->inputChar=CYRILLIC_yu;
                         break;
                     default:
-                        *uniStr=CYRILLIC_u;
+                        *ctx->inputChar=CYRILLIC_u;
                         break;
                 }
                 break;
             case I_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case A_KEY:
-                        *uniStr=CYRILLIC_ii;
+                        *ctx->inputChar=CYRILLIC_ii;
                         break;
                     case E_KEY:
-                        *uniStr=CYRILLIC_ii;
+                        *ctx->inputChar=CYRILLIC_ii;
                         break;
                     case I_KEY:
-                        *uniStr=CYRILLIC_ii;
+                        *ctx->inputChar=CYRILLIC_ii;
                         break;
                     case O_KEY:
-                        *uniStr=CYRILLIC_ii;
+                        *ctx->inputChar=CYRILLIC_ii;
                         break;
                     case U_KEY:
-                        *uniStr=CYRILLIC_ii;
+                        *ctx->inputChar=CYRILLIC_ii;
                         break;
                     case Q_KEY:
-                        *uniStr=CYRILLIC_ii;
+                        *ctx->inputChar=CYRILLIC_ii;
                         break;
                     case W_KEY:
-                        *uniStr=CYRILLIC_ii;
+                        *ctx->inputChar=CYRILLIC_ii;
                         break;
                     default:
-                        *uniStr=CYRILLIC_i;
+                        *ctx->inputChar=CYRILLIC_i;
                         break;
                 }
                 break;
             case O_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_yo;
+                        *ctx->inputChar=CYRILLIC_yo;
                         break;
                     default:
-                        *uniStr=CYRILLIC_o;
+                        *ctx->inputChar=CYRILLIC_o;
                         break;
                 }
                 break;
             case P_KEY:
-                *uniStr=CYRILLIC_p;
+                *ctx->inputChar=CYRILLIC_p;
                 break;
             case A_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case Y_KEY:
-                        *uniStr=CYRILLIC_ya;
+                        *ctx->inputChar=CYRILLIC_ya;
                         break;
                     default:
-                        *uniStr=CYRILLIC_a;
+                        *ctx->inputChar=CYRILLIC_a;
                         break;
                 }
                 break;
             case S_KEY:
-                *uniStr=CYRILLIC_s;
+                *ctx->inputChar=CYRILLIC_s;
                 break;
             case D_KEY:
-                *uniStr=CYRILLIC_d;
+                *ctx->inputChar=CYRILLIC_d;
                 break;
             case F_KEY:
-                *uniStr=CYRILLIC_f;
+                *ctx->inputChar=CYRILLIC_f;
                 break;
             case G_KEY:
-                *uniStr=CYRILLIC_g;
+                *ctx->inputChar=CYRILLIC_g;
                 break;
             case H_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case S_KEY:
-                        *uniStr=CYRILLIC_sh;
+                        *ctx->inputChar=CYRILLIC_sh;
                         break;
                     case C_KEY:
-                        *uniStr=CYRILLIC_ch;
+                        *ctx->inputChar=CYRILLIC_ch;
                         break;
                     default:
-                        *uniStr=CYRILLIC_x;
+                        *ctx->inputChar=CYRILLIC_x;
                         break;
                 }
                 break;
             case J_KEY:
-                *uniStr=CYRILLIC_j;
+                *ctx->inputChar=CYRILLIC_j;
                 break;
             case K_KEY:
-                *uniStr=CYRILLIC_k;
+                *ctx->inputChar=CYRILLIC_k;
                 break;
             case L_KEY:
-                *uniStr=CYRILLIC_l;
+                *ctx->inputChar=CYRILLIC_l;
                 break;
             case Z_KEY:
-                *uniStr=CYRILLIC_z;
+                *ctx->inputChar=CYRILLIC_z;
                 break;
             case X_KEY:
-                *uniStr=CYRILLIC_x;
+                *ctx->inputChar=CYRILLIC_x;
                 break;
             case C_KEY:
-                switch(*buffer){
+                switch(ctx->buffer){
                     case S_KEY:
-                        *uniStr=CYRILLIC_sch;
+                        *ctx->inputChar=CYRILLIC_sch;
                         break;
                     default:
-                         *uniStr=CYRILLIC_c;
+                         *ctx->inputChar=CYRILLIC_c;
                         break;
                 }
                 break;
             case V_KEY:
-                *uniStr=CYRILLIC_v;
+                *ctx->inputChar=CYRILLIC_v;
                 break;
             case B_KEY:
-                *uniStr=CYRILLIC_b;
+                *ctx->inputChar=CYRILLIC_b;
                 break;
             case N_KEY:
-                *uniStr=CYRILLIC_n;
+                *ctx->inputChar=CYRILLIC_n;
                 break;
             case M_KEY:
-                *uniStr=CYRILLIC_m;
+                *ctx->inputChar=CYRILLIC_m;
                 break;
             case ZUULNII_TEMDEG_MARK:
-                *uniStr=CYRILLIC_zt;
+                *ctx->inputChar=CYRILLIC_zt;
                 break;
             case HATUUGIIN_TEMDEG_MARK:
-                *uniStr=CYRILLIC_xt;
+                *ctx->inputChar=CYRILLIC_xt;
                 break;
             default:
-                CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) input);
+                CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t) ctx->inputInt);
                 return 1;
         }
     }
-    *buffer=input;
+    ctx->buffer=ctx->inputInt;
     return 0;
 }
